@@ -17,8 +17,13 @@ Vue.component('card', {
     template: '#card-template'
 });
 Vue.component('cards', {
-    props: ['title', 'group', 'cards', 'total', 'type'],
-    template: '#cards-template'
+    props: ['title', 'group', 'cards', 'total'],
+    template: '#cards-template',
+    methods: {
+        onAdd: function(evt) {
+            console.log(evt);
+        }
+    }
 });
 
 var app = new Vue({
