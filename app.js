@@ -1,7 +1,7 @@
 var configs = {
-    API_KEY: "",
-    PROJECT_KEY: "",
-    BASE_URL: "https://.backlog.jp",
+    API_KEY: "dCcgy9cYmZAH6rxmCpXWvc4QybhQAY4Qn012p6KdTGqVNRWuF5CVgEaeyae6jojS",
+    PROJECT_KEY: "KWC_COL",
+    BASE_URL: "https://lexues.backlog.jp",
     API: {
         VERSION: "/api/v2/projects/:projectIdOrKey/versions",
         ISSUES: "/api/v2/issues",
@@ -56,30 +56,6 @@ var app = new Vue({
             return this.sprintBacklogs.filter(function(val) {
                 return val.status.id === 3 || val.status.id === 4;
             });
-        },
-        totalProductBacklogs: function() {
-            if (this.productBacklogs.length === 0) return 0;
-            return this.productBacklogs.map(function(val) {
-                return val.estimatedHours;
-            }).reduce(this._sum);
-        },
-        totalTodo: function() {
-            if (this.todo.length === 0) return 0;
-            return this.todo.map(function(val) {
-                return val.estimatedHours;
-            }).reduce(this._sum);
-        },
-        totalDoing: function() {
-            if (this.doing.length === 0) return 0;
-            return this.doing.map(function(val) {
-                return val.estimatedHours;
-            }).reduce(this._sum);
-        },
-        totalDone: function() {
-            if (this.done.length === 0) return 0;
-            return this.done.map(function(val) {
-                return val.estimatedHours;
-            }).reduce(this._sum);
         }
     },
     methods: {
@@ -106,10 +82,12 @@ var app = new Vue({
             });
         },
         getIssues: function(version) {
+            if (!version || !version.projectId || !version.id) return [];
             return axios.get(configs.BASE_URL + configs.API.ISSUES, {
                 params: {
                     apiKey: configs.API_KEY,
-                    milestoneId: [version],
+                    projectId: [version.projectId],
+                    milestoneId: [version.id],
                     sort: "created",
                     order: "asc"
                 }
@@ -118,6 +96,7 @@ var app = new Vue({
             });
         },
         getChildIssues: function(issues) {
+            if (issues.length === 0) return [];
             var parents = issues.map(function(val) {
                 return val.id;
             });
@@ -131,6 +110,12 @@ var app = new Vue({
             }).then(function(res) {
                 return res.data;
             });
+        },
+        totalEstimatedHours: function(records) {
+            if (records.length === 0) return 0;
+            return records.map(function(val) {
+                return val.estimatedHours;
+            }).reduce(this._sum);
         },
         _sum: function(a, b) {
             return a + b;
