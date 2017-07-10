@@ -1,17 +1,3 @@
-var configs = {
-    API_KEY: "",
-    PROJECT_KEY: "",
-    BASE_URL: "https://.backlog.jp",
-    API: {
-        VERSION: "/api/v2/projects/:projectIdOrKey/versions",
-        ISSUES: "/api/v2/issues",
-        ICON: "/api/v2/users/:userId/icon"
-    },
-    PAGE: {
-        VIEW: '/view/'
-    }
-};
-
 Vue.component('card', {
     props: ['card'],
     template: '#card-template'
@@ -105,13 +91,16 @@ var app = new Vue({
             var parents = issues.map(function(val) {
                 return val.id;
             });
+            var params = new URLSearchParams();
+            params.append('apiKey', configs.API_KEY);
+            params.append('sort', "created");
+            params.append('order', "asc");
+            params.append('count', 100);
+            parents.forEach(function(v, i) {
+                params.append('parentIssueId[' + i + ']', v);
+            });
             return axios.get(configs.BASE_URL + configs.API.ISSUES, {
-                params: {
-                    apiKey: configs.API_KEY,
-                    parentIssueId: parents,
-                    sort: "created",
-                    order: "asc"
-                }
+                params: params
             }).then(function(res) {
                 return res.data;
             });
