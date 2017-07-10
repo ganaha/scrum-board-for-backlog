@@ -1,7 +1,7 @@
 var configs = {
-    API_KEY: "dCcgy9cYmZAH6rxmCpXWvc4QybhQAY4Qn012p6KdTGqVNRWuF5CVgEaeyae6jojS",
-    PROJECT_KEY: "KWC_COL",
-    BASE_URL: "https://lexues.backlog.jp",
+    API_KEY: "",
+    PROJECT_KEY: "",
+    BASE_URL: "https://.backlog.jp",
     API: {
         VERSION: "/api/v2/projects/:projectIdOrKey/versions",
         ISSUES: "/api/v2/issues",
