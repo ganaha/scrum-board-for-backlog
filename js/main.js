@@ -12,7 +12,8 @@
                 API: {
                     VERSION: "/api/v2/projects/:projectIdOrKey/versions",
                     ISSUES: "/api/v2/issues",
-                    ICON: "/api/v2/users/:userId/icon"
+                    ICON: "/api/v2/users/:userId/icon",
+                    UPDATE: "/api/v2/issues/:issueIdOrKey"
                 },
                 PAGE: {
                     VIEW: '/view/'
@@ -29,38 +30,39 @@
         created: function() {
             var _this = this;
 
-
-
             var port = chrome.runtime.connect({
                 name: chrome.runtime.id
             });
-            // @see background.js#chrome.runtime.onMessage.addListener
-            port.postMessage();
+
+            port.postMessage(this.CONFIGS);
             port.onMessage.addListener(function(res) {
-                console.log("main.js");
+                _this.CONFIGS = res;
+
+                _this.getVersions().then(function(results) {
+                    _this.versions = results;
+                }).catch(function(err) {
+                    console.log(err);
+                    alert('Please enter an option.');
+                });
             });
 
-
-
-
-            this.getVersions().then(function(results) {
-                _this.versions = results;
-            }).catch(function(err) {
-                console.log(err);
-            });
         },
         methods: {
             refresh: function() {
                 var _this = this;
+                this.isLoading = true;
+
                 if (!this.version) {
                     this.getVersions().then(function(results) {
                         _this.versions = results;
+                        _this.isLoading = false;
                     }).catch(function(err) {
                         console.log(err);
+                        _this.isLoading = false;
                     });
                     return;
                 }
-                this.isLoading = true;
+
                 this.getIssues(this.version).then(function(res) {
                     _this.productBacklogs = res;
                     return res;
@@ -89,7 +91,7 @@
             filterDone: function(records) {
                 if (records.length === 0) return [];
                 return records.filter(function(val) {
-                    return val.status.id === 3 || val.status.id === 4;
+                    return val.status.id === 3;
                 });
             },
             getVersions: function() {
@@ -142,6 +144,25 @@
             },
             _sum: function(a, b) {
                 return a + b;
+            },
+            onAddTodo: function(evt) {
+                var issueKey = $($(evt.item).find('small')[0]).text();
+                this._updateStatus(issueKey, 1);
+            },
+            onAddDoing: function(evt) {
+                var issueKey = $($(evt.item).find('small')[0]).text();
+                this._updateStatus(issueKey, 2);
+            },
+            onAddDone: function(evt) {
+                var issueKey = $($(evt.item).find('small')[0]).text();
+                this._updateStatus(issueKey, 3);
+            },
+            _updateStatus: function(key, val) {
+                return axios.patch(this.CONFIGS.BASE_URL + this.CONFIGS.API.UPDATE.replace(':issueIdOrKey', key) + '?apiKey=' + this.CONFIGS.API_KEY, {
+                    statusId: val
+                }).then(function(res) {
+                    return res.data;
+                });
             }
         }
     });

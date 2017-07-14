@@ -25,9 +25,6 @@
                     <option disabled value="0">Please select</option>
                     <option v-for="version in versions" :value="version">{{ version.name }}</option>
                 </select>
-                <input type="text" class="form-control" placeholder="API_KEY" v-model="CONFIGS.API_KEY" />
-                <input type="text" class="form-control" placeholder="PROJECT_KEY" v-model="CONFIGS.PROJECT_KEY" />
-                <input type="text" class="form-control" placeholder="https://xxx.backlog.jp" v-model="CONFIGS.BASE_URL" />
                 <i class="fa fa-refresh fa-2x fa-fw" :class="{ 'fa-spin': isLoading }" @click="refresh"></i>
                 <span class="sr-only">Loading...</span>
             </form>
@@ -61,10 +58,10 @@
                             ToDo
                             <span class="badge badge-default badge-pill">{{ totalEstimatedHours(todo) }}</span>
                         </div>
-                        <draggable v-model="todo" :options="{group: 'sprint'}">
+                        <draggable v-model="todo" :options="{group: 'sprint'}" @add="onAddTodo">
                             <transition-group style="min-height: 300px; display: block;">
                                 <a v-for="card in todo" :key="card.id" target="_blank" :href="CONFIGS.BASE_URL + CONFIGS.PAGE.VIEW + card.issueKey" class="list-group-item" :title="card.description">
-                                    <div class="d-flex w-100 justify-content-between"><small>{{ card.issueKey }}</small></div>
+                                    <div class="d-flex w-100 justify-content-between"><small class="issueKey">{{ card.issueKey }}</small></div>
                                     <div class="d-flex w-100 justify-content-between">{{ card.summary }}</div>
                                     <div class="d-flex w-100 justify-content-between">
                                         <img style="height: 1em; width: 1em;" :src="card.assignee ? CONFIGS.BASE_URL + CONFIGS.API.ICON.replace(':userId', card.assignee.id) + '?apiKey=' + CONFIGS.API_KEY : ''" :alt="card.assignee ? card.assignee.name : ''" :title="card.assignee ? card.assignee.name : ''">
@@ -81,7 +78,7 @@
                             Doing
                             <span class="badge badge-default badge-pill">{{ totalEstimatedHours(doing) }}</span>
                         </div>
-                        <draggable v-model="doing" :options="{group: 'sprint'}">
+                        <draggable v-model="doing" :options="{group: 'sprint'}" @add="onAddDoing">
                             <transition-group style="min-height: 300px; display: block;">
                                 <a v-for="card in doing" :key="card.id" target="_blank" :href="CONFIGS.BASE_URL + CONFIGS.PAGE.VIEW + card.issueKey" class="list-group-item" :title="card.description">
                                     <div class="d-flex w-100 justify-content-between"><small>{{ card.issueKey }}</small></div>
@@ -101,7 +98,7 @@
                             Done
                             <span class="badge badge-default badge-pill">{{ totalEstimatedHours(done) }}</span>
                         </div>
-                        <draggable v-model="done" :options="{group: 'sprint'}">
+                        <draggable v-model="done" :options="{group: 'sprint'}" @add="onAddDone">
                             <transition-group style="min-height: 300px; display: block;">
                                 <a v-for="card in done" :key="card.id" target="_blank" :href="CONFIGS.BASE_URL + CONFIGS.PAGE.VIEW + card.issueKey" class="list-group-item" :title="card.description">
                                     <div class="d-flex w-100 justify-content-between"><small>{{ card.issueKey }}</small></div>
