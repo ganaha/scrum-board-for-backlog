@@ -1,0 +1,31 @@
+{
+    "manifest_version": 2,
+    "name": "__MSG_extName__",
+    "version": "1.0",
+    "default_locale": "en",
+    "description": "Scrum Board for Backlog.",
+    "icons": {
+        "16": "images/icon16.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+    },
+    "browser_action": {
+        "default_icon": "images/icon.png",
+        "default_title": "Scrum Board for Backlog"
+    },
+    "author": "t.ganaha",
+    "background": {
+        "scripts": ["js/jquery-3.1.1.min.js", "js/background.js"],
+        "persistent": false
+    },
+    "permissions": ["tabs", "http://*/*", "https://*/*", "storage"],
+    "web_accessible_resources": ["*.png", "*.ttf", "*.woff", "*.woff2"],
+    "sandbox": {
+        "pages": ["main.html"]
+    },
+    "short_name": "scrum",
+    "options_ui": {
+        "page": "options.html",
+        "chrome_style": true
+    }
+}
