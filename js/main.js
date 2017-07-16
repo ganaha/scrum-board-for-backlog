@@ -2,6 +2,29 @@
 
     "use strict";
 
+    Vue.component('cards', {
+        props: ['cards', 'group', 'configs', 'total', 'title', 'status', 'color'],
+        template: '#cards',
+        methods: {
+            onAdd: function(evt) {
+                var issueKey = $($(evt.item).find('small')[0]).text();
+                this._updateStatus(issueKey, this.status);
+            },
+            _updateStatus: function(key, val) {
+                return axios.patch(this.configs.BASE_URL + this.configs.API.UPDATE.replace(':issueIdOrKey', key) + '?apiKey=' + this.configs.API_KEY, {
+                    statusId: val
+                }).then(function(res) {
+                    return res.data;
+                });
+            }
+        }
+    });
+
+    Vue.component('card', {
+        props: ['card', 'configs'],
+        template: '#card'
+    });
+
     var app = new Vue({
         el: "#app",
         data: {
@@ -144,25 +167,6 @@
             },
             _sum: function(a, b) {
                 return a + b;
-            },
-            onAddTodo: function(evt) {
-                var issueKey = $($(evt.item).find('small')[0]).text();
-                this._updateStatus(issueKey, 1);
-            },
-            onAddDoing: function(evt) {
-                var issueKey = $($(evt.item).find('small')[0]).text();
-                this._updateStatus(issueKey, 2);
-            },
-            onAddDone: function(evt) {
-                var issueKey = $($(evt.item).find('small')[0]).text();
-                this._updateStatus(issueKey, 3);
-            },
-            _updateStatus: function(key, val) {
-                return axios.patch(this.CONFIGS.BASE_URL + this.CONFIGS.API.UPDATE.replace(':issueIdOrKey', key) + '?apiKey=' + this.CONFIGS.API_KEY, {
-                    statusId: val
-                }).then(function(res) {
-                    return res.data;
-                });
             }
         }
     });

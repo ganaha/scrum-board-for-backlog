@@ -11,8 +11,6 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/font-awesome.min.css" />
-
-    <!-- <link rel="icon" type="image/png" href="images/favicon.png"> -->
 </head>
 
 <body>
@@ -33,84 +31,16 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <div class="list-group">
-                        <div class="list-group-item list-group-item-success justify-content-between">
-                            Product Backlogs
-                            <span class="badge badge-default badge-pill">{{ totalEstimatedHours(productBacklogs) }}</span>
-                        </div>
-                        <draggable v-model="productBacklogs" :options="{group: 'product'}">
-                            <transition-group style="min-height: 300px; display: block;">
-                                <a v-for="card in productBacklogs" :key="card.id" target="_blank" :href="CONFIGS.BASE_URL + CONFIGS.PAGE.VIEW + card.issueKey" class="list-group-item" :title="card.description">
-                                    <div class="d-flex w-100 justify-content-between"><small>{{ card.issueKey }}</small></div>
-                                    <div class="d-flex w-100 justify-content-between">{{ card.summary }}</div>
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <img style="height: 1em; width: 1em;" :src="card.assignee ? CONFIGS.BASE_URL + CONFIGS.API.ICON.replace(':userId', card.assignee.id) + '?apiKey=' + CONFIGS.API_KEY : ''" :alt="card.assignee ? card.assignee.name : ''" :title="card.assignee ? card.assignee.name : ''">
-                                        <span class="badge badge-default badge-pill">{{ card.estimatedHours }}</span>
-                                    </div>
-                                </a>
-                            </transition-group>
-                        </draggable>
-                    </div>
+                    <cards :cards="productBacklogs" group="product" :configs="CONFIGS" :total="totalEstimatedHours(productBacklogs)" title="Product Backlogs" status="0" color="list-group-item-success"></cards>
                 </div>
                 <div class="col">
-                    <div class="list-group">
-                        <div class="list-group-item list-group-item-danger justify-content-between">
-                            ToDo
-                            <span class="badge badge-default badge-pill">{{ totalEstimatedHours(todo) }}</span>
-                        </div>
-                        <draggable v-model="todo" :options="{group: 'sprint'}" @add="onAddTodo">
-                            <transition-group style="min-height: 300px; display: block;">
-                                <a v-for="card in todo" :key="card.id" target="_blank" :href="CONFIGS.BASE_URL + CONFIGS.PAGE.VIEW + card.issueKey" class="list-group-item" :title="card.description">
-                                    <div class="d-flex w-100 justify-content-between"><small class="issueKey">{{ card.issueKey }}</small></div>
-                                    <div class="d-flex w-100 justify-content-between">{{ card.summary }}</div>
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <img style="height: 1em; width: 1em;" :src="card.assignee ? CONFIGS.BASE_URL + CONFIGS.API.ICON.replace(':userId', card.assignee.id) + '?apiKey=' + CONFIGS.API_KEY : ''" :alt="card.assignee ? card.assignee.name : ''" :title="card.assignee ? card.assignee.name : ''">
-                                        <span class="badge badge-default badge-pill">{{ card.estimatedHours }}</span>
-                                    </div>
-                                </a>
-                            </transition-group>
-                        </draggable>
-                    </div>
+                    <cards :cards="todo" group="sprint" :configs="CONFIGS" :total="totalEstimatedHours(todo)" title="ToDo" status="1" color="list-group-item-danger"></cards>
                 </div>
                 <div class="col">
-                    <div class="list-group">
-                        <div class="list-group-item list-group-item-warning justify-content-between">
-                            Doing
-                            <span class="badge badge-default badge-pill">{{ totalEstimatedHours(doing) }}</span>
-                        </div>
-                        <draggable v-model="doing" :options="{group: 'sprint'}" @add="onAddDoing">
-                            <transition-group style="min-height: 300px; display: block;">
-                                <a v-for="card in doing" :key="card.id" target="_blank" :href="CONFIGS.BASE_URL + CONFIGS.PAGE.VIEW + card.issueKey" class="list-group-item" :title="card.description">
-                                    <div class="d-flex w-100 justify-content-between"><small>{{ card.issueKey }}</small></div>
-                                    <div class="d-flex w-100 justify-content-between">{{ card.summary }}</div>
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <img style="height: 1em; width: 1em;" :src="card.assignee ? CONFIGS.BASE_URL + CONFIGS.API.ICON.replace(':userId', card.assignee.id) + '?apiKey=' + CONFIGS.API_KEY : ''" :alt="card.assignee ? card.assignee.name : ''" :title="card.assignee ? card.assignee.name : ''">
-                                        <span class="badge badge-default badge-pill">{{ card.estimatedHours }}</span>
-                                    </div>
-                                </a>
-                            </transition-group>
-                        </draggable>
-                    </div>
+                    <cards :cards="doing" group="sprint" :configs="CONFIGS" :total="totalEstimatedHours(doing)" title="Doing" status="2" color="list-group-item-warning"></cards>
                 </div>
                 <div class="col">
-                    <div class="list-group">
-                        <div class="list-group-item list-group-item-info justify-content-between">
-                            Done
-                            <span class="badge badge-default badge-pill">{{ totalEstimatedHours(done) }}</span>
-                        </div>
-                        <draggable v-model="done" :options="{group: 'sprint'}" @add="onAddDone">
-                            <transition-group style="min-height: 300px; display: block;">
-                                <a v-for="card in done" :key="card.id" target="_blank" :href="CONFIGS.BASE_URL + CONFIGS.PAGE.VIEW + card.issueKey" class="list-group-item" :title="card.description">
-                                    <div class="d-flex w-100 justify-content-between"><small>{{ card.issueKey }}</small></div>
-                                    <div class="d-flex w-100 justify-content-between">{{ card.summary }}</div>
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <img style="height: 1em; width: 1em;" :src="card.assignee ? CONFIGS.BASE_URL + CONFIGS.API.ICON.replace(':userId', card.assignee.id) + '?apiKey=' + CONFIGS.API_KEY : ''" :alt="card.assignee ? card.assignee.name : ''" :title="card.assignee ? card.assignee.name : ''">
-                                        <span class="badge badge-default badge-pill">{{ card.estimatedHours }}</span>
-                                    </div>
-                                </a>
-                            </transition-group>
-                        </draggable>
-                    </div>
+                    <cards :cards="done" group="sprint" :configs="CONFIGS" :total="totalEstimatedHours(done)" title="Done" status="3" color="list-group-item-info"></cards>
                 </div>
             </div>
         </div>
@@ -124,6 +54,33 @@
     <script src="js/Sortable.min.js"></script>
     <script src="js/vuedraggable.min.js"></script>
     <script src="js/axios.min.js"></script>
+
+    <!-- Cards -->
+    <script type="text/x-template" id="cards">
+        <div class="list-group">
+            <div class="list-group-item justify-content-between" :class="color">
+                {{ title }}
+                <span class="badge badge-default badge-pill">{{ total }}</span>
+            </div>
+            <draggable :list="cards" :options="{group: group}" @add="onAdd">
+                <transition-group style="min-height: 300px; display: block;">
+                    <card v-for="card in cards" :key="card.id" :card="card" :configs="configs"></card>
+                </transition-group>
+            </draggable>
+        </div>
+    </script>
+
+    <!-- Card -->
+    <script type="text/x-template" id="card">
+        <a target="_blank" :href="configs.BASE_URL + configs.PAGE.VIEW + card.issueKey" class="list-group-item" :title="card.description">
+            <div class="d-flex w-100 justify-content-between"><small class="issueKey">{{ card.issueKey }}</small></div>
+            <div class="d-flex w-100 justify-content-between">{{ card.summary }}</div>
+            <div class="d-flex w-100 justify-content-between">
+                <img style="height: 1em; width: 1em;" :src="card.assignee ? configs.BASE_URL + configs.API.ICON.replace(':userId', card.assignee.id) + '?apiKey=' + configs.API_KEY : ''" :alt="card.assignee ? card.assignee.name : ''" :title="card.assignee ? card.assignee.name : ''">
+                <span class="badge badge-default badge-pill">{{ card.estimatedHours }}</span>
+            </div>
+        </a>
+    </script>
 
     <script src="js/main.js"></script>
 </body>
